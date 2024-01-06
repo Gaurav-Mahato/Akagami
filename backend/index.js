@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const connectDB = require('./config/db.js')
 const app = express()
 const cors = require('cors')
+const userRoutes = require('./routes/userRoutes.js')
 
 app.use(cors())
 app.use(express.json())
@@ -15,7 +16,8 @@ const port = process.env.PORT || 4000
 app.get("/",(req,res) => {
     res.send("Hello World")
 })
- 
+app.use("/api/users",userRoutes) 
+
 app.listen({port:4000},async() => {
     console.log(`Server running on port 4000`)
 })
