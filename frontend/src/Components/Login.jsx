@@ -7,7 +7,7 @@ import Toaster from "./Toaster";
 
 function Login() {
   const [showlogin, setShowLogin] = useState(false);
-  const [data, setData] = useState({ name: "", email: "", password: "" });
+  const [data, setData] = useState({ name: "", email: "", contact: "", password: "" });
   const [loading, setLoading] = useState(false);
 
   const [logInStatus, setLogInStatus] = React.useState("");
@@ -21,7 +21,7 @@ function Login() {
 
   const loginHandler = async (e) => {
     setLoading(true);
-    console.log(data);
+    // console.log(data);
     try {
       const config = {
         headers: {
@@ -30,11 +30,11 @@ function Login() {
       };
 
       const response = await axios.post(
-        "http://localhost:8080/user/login/",
+        "http://localhost:8080/api/users/login",
         data,
         config
       );
-      console.log("Login : ", response);
+      // console.log("Login : ", response);
       setLogInStatus({ msg: "Success", key: Math.random() });
       setLoading(false);
       localStorage.setItem("userData", JSON.stringify(response));
@@ -58,7 +58,7 @@ function Login() {
       };
 
       const response = await axios.post(
-        "http://localhost:8080/user/register/",
+        "http://localhost:8080/api/users/register",
         data,
         config
       );
@@ -68,19 +68,7 @@ function Login() {
       localStorage.setItem("userData", JSON.stringify(response));
       setLoading(false);
     } catch (error) {
-      console.log(error);
-      if (error.response.status === 405) {
-        setLogInStatus({
-          msg: "User with this email ID already Exists",
-          key: Math.random(),
-        });
-      }
-      if (error.response.status === 406) {
-        setLogInStatus({
-          msg: "User Name already Taken, Please take another one",
-          key: Math.random(),
-        });
-      }
+      console.error(error)
       setLoading(false);
     }
   };
@@ -103,10 +91,10 @@ function Login() {
             <TextField
               onChange={changeHandler}
               id="standard-basic"
-              label="Enter User Name"
+              label="Enter Email"
               variant="outlined"
               color="secondary"
-              name="name"
+              name="email"
               onKeyDown={(event) => {
                 if (event.code == "Enter") {
                   // console.log(event);
@@ -178,6 +166,20 @@ function Login() {
               variant="outlined"
               color="secondary"
               name="email"
+              onKeyDown={(event) => {
+                if (event.code == "Enter") {
+                  // console.log(event);
+                  signUpHandler();
+                }
+              }}
+            />
+            <TextField
+              onChange={changeHandler}
+              id="standard-basic"
+              label="Enter your contact"
+              variant="outlined"
+              color="secondary"
+              name="contact"
               onKeyDown={(event) => {
                 if (event.code == "Enter") {
                   // console.log(event);

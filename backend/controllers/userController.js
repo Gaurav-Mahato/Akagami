@@ -50,12 +50,13 @@ const loginUser = async(req,res) => {
 }
 
 const updateProfile = asyncHandler(async(req,res) => {
-    const {name,email,password} = req.body
+    const {name,email,password,contact} = req.body
     const user = await User.findById(req.user._id)
     const salt = await bcrypt.genSalt(10)
     if(user){
         user.name = name || user.name
         user.email = email || user.email
+        user.contact = contact || user.contact
         if(password){
             user.password = await bcrypt.hash(password,salt)
         }
@@ -64,6 +65,7 @@ const updateProfile = asyncHandler(async(req,res) => {
             _id: updatedUser._id,
             name: updatedUser.name,
             email: updatedUser.email,
+            contact: updatedUser.contact,
             token: generateToken(updatedUser._id)
         })
     }

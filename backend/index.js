@@ -23,6 +23,6 @@ app.get("/",(req,res) => {
 app.use("/api/users",userRoutes) 
 // app.use("/api/uploads",uploadRoutes)
 
-app.listen({port:4000},async() => {
+app.listen({port:8080},async() => {
     console.log(`Server running on port 4000`)
 })
