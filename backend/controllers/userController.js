@@ -49,7 +49,32 @@ const loginUser = async(req,res) => {
     }
 }
 
+const updateProfile = asyncHandler(async(req,res) => {
+    const {name,email,password} = req.body
+    const user = await User.findById(req.user._id)
+    const salt = await bcrypt.genSalt(10)
+    if(user){
+        user.name = name || user.name
+        user.email = email || user.email
+        if(password){
+            user.password = await bcrypt.hash(password,salt)
+        }
+        const updatedUser = await user.save()
+        res.json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            token: generateToken(updatedUser._id)
+        })
+    }
+    else{
+        res.status(404)
+        throw new Error('User not found')
+    }
+})
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    updateProfile
 }
