@@ -1,8 +1,7 @@
 import React, { createContext, useState } from "react";
 import "./myStyles.css";
 import Sidebar from "./Sidebar";
-import { Outlet } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+
 
 export const myContext = createContext();
 function MainContainer() {

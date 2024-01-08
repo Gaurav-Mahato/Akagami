@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import "./myStyles.css";
 import SearchIcon from "@mui/icons-material/Search";
 import { IconButton } from "@mui/material";
-import logo from "../Images/live-chat_512px.png";
+import logo from "../Images/images-fotor-202401082342.png";
 import { useDispatch, useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 import RefreshIcon from "@mui/icons-material/Refresh";
