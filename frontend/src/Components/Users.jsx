@@ -17,6 +17,7 @@ function Users() {
 
   const lightTheme = useSelector((state) => state.themeKey);
   const [users, setUsers] = useState([]);
+  const [email,setEmail] = useState('')
   const userData = JSON.parse(localStorage.getItem("userData"));
   // console.log("Data from LocalStorage : ", userData);
   const nav = useNavigate();
@@ -29,14 +30,19 @@ function Users() {
 
   useEffect(() => {
     console.log("Users refreshed");
+    console.log(email)
     const config = {
       headers: {
         Authorization: `Bearer ${userData.data.token}`,
       },
     };
-    axios.get("http://localhost:8080/user/fetchUsers", config).then((data) => {
-      console.log("UData refreshed in Users panel ");
-      setUsers(data.data);
+    const query = {
+      email
+    }
+    axios.post("http://localhost:8080/api/users/profile",query,config).then((response) => {
+      // console.log("Uresponse refreshed in Users panel ");
+      setUsers(response.data);
+      console.log("Data",response.data)
       // setRefresh(!refresh);
     });
   }, [refresh]);
@@ -76,6 +82,7 @@ function Users() {
           <input
             placeholder="Search"
             className={"search-box" + (lightTheme ? "" : " dark")}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         <div className="ug-list">
@@ -93,6 +100,7 @@ function Users() {
                       Authorization: `Bearer ${userData.data.token}`,
                     },
                   };
+                  console.log(user._id)
                   axios.post(
                     "http://localhost:8080/chat/",
                     {

@@ -75,8 +75,36 @@ const updateProfile = asyncHandler(async(req,res) => {
     }
 })
 
+const findUser = asyncHandler(async(req,res) => {
+
+    // Classify query generating user && query 
+    const user = await User.findById(req.user._id)
+    const {email} = req.body
+
+    // Check on query
+    const query_user = await User.findOne({email})
+
+    // User found
+    if(query_user){
+        // Perform operation
+            
+            // Add him in user's contact list
+            const response = [query_user]
+            res.status(200).send(response)
+    }
+
+    // User not found
+    else{
+        res.status(404).send({
+            message: "User not found"
+        })
+    }
+
+})
+
 module.exports = {
     registerUser,
     loginUser,
-    updateProfile
+    updateProfile,
+    findUser
 }
