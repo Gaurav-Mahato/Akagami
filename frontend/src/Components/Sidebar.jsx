@@ -19,13 +19,10 @@ function Sidebar() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const lightTheme = useSelector((state) => state.themeKey);
-  // const refresh = useSelector((state) => state.refreshKey);
   const { refresh, setRefresh } = useContext(myContext);
   console.log("Context API : refresh : ", refresh);
   const [conversations, setConversations] = useState([]);
-  // console.log("Conversations of Sidebar : ", conversations);
   const userData = JSON.parse(localStorage.getItem("userData"));
-  // console.log("Data from LocalStorage : ", userData);
   const nav = useNavigate();
   if (!userData) {
     console.log("User not Authenticated");
@@ -34,17 +31,15 @@ function Sidebar() {
 
   const user = userData.data;
   useEffect(() => {
-    // console.log("Sidebar : ", user.token);
     const config = {
       headers: {
         Authorization: `Bearer ${user.token}`,
       },
     };
 
-    axios.get("http://localhost:8080/chat/", config).then((response) => {
+    axios.get("http://localhost:5173/chat/", config).then((response) => {
       console.log("Data refresh in sidebar ", response.data);
       setConversations(response.data);
-      // setRefresh(!refresh);
     });
   }, [refresh]);
 
@@ -145,7 +140,6 @@ function Sidebar() {
                         conversation.users[1].name
                     );
                   }}
-                  // dispatch change to refresh so as to update chatArea
                 >
                   <p className={"con-icon" + (lightTheme ? "" : " dark")}>
                     {conversation.users[1].name[0]}
