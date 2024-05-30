@@ -32,3 +32,31 @@ app.use("/api/chat",chatRoutes)
 app.listen({port:8080},async() => {
     console.log(`Server running on port 8080`)
 })
+
+const io = require("socket.io")(server, {
+    cors: {
+        origin: "*",
+    },
+    pingTimeout: 60000,
+});
+
+socket.on("setup", (user)=>{
+    socket.join(user.data._id);
+    socket.emit("connected");
+});
+
+socket.on("join chat",(room)=>{
+    socket.join(room);
+})
+
+socket.on("newMessage",(newMessageStatus)=>{
+    var chat = newMessageStatus.chat;
+    if(!chat.users){
+        return console.log("chat.users not defined");
+    }
+    chat.users.array.forEach(user => {
+        if(user._id == newMessageStatus.sender._id) return;
+
+        socket.in(user._id).emit("message recieved", newMessageRecieved);
+    });
+});

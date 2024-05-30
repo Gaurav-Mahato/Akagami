@@ -9,7 +9,11 @@ import { useParams } from "react-router-dom";
 import Skeleton from "@mui/material/Skeleton";
 import axios from "axios";
 import { myContext } from "./MainContainer";
+import io from "socket.io-client";
 
+const ENDPOINT = "http://localhost:8080/";
+
+var socket,chat;
 function ChatArea() {
   const lightTheme = useSelector((state) => state.themeKey);
   const [messageContent, setMessageContent] = useState("");
@@ -18,8 +22,10 @@ function ChatArea() {
   const [chat_id, chat_user] = dyParams._id.split("&");
   const userData = JSON.parse(localStorage.getItem("userData"));
   const [allMessages, setAllMessages] = useState([]);
+  const [allMessagesCopy, setAllMessagesCopy] = useState([]);
   const { refresh, setRefresh } = useContext(myContext);
   const [loaded, setloaded] = useState(false);
+  const [socketConnectionStatus, setSocketConnectionStatus] = useState(false);
   const sendMessage = () => {
     const config = {
       headers: {
@@ -28,7 +34,7 @@ function ChatArea() {
     };
     axios
       .post(
-        "http://localhost:5173/message/",
+        "http://localhost:8080/message/",
         {
           content: messageContent,
           chatId: chat_id,
@@ -38,22 +44,43 @@ function ChatArea() {
       .then(({ data }) => {
         console.log("Message Fired");
       });
+      socket.emit("newMessage", data);
   };
 
+  useEffect(()=>{
+    socket = io(ENDPOINT);
+    socket.emit("setup",userData);
+    socket.on("connnection", ()=>{
+      setSocketConnectionStatus(!socketConnectionStatus);
+    });
+  },[]);
+
+  useEffect(()=>{
+    socket.on("message recieved", (newMessage)=>{
+      if(!allMessagesCopy || allMessagesCopy._id !== newMessage._id){
+
+      }
+      else{
+        setAllMessages([...allMessages],newMessage);
+      }
+    })
+  });
+
   useEffect(() => {
-    console.log("Users refreshed");
     const config = {
       headers: {
         Authorization: `Bearer ${userData.data.token}`,
       },
     };
     axios
-      .get("http://localhost:5173/message/" + chat_id, config)
+      .get("http://localhost:8080 /message/" + chat_id, config)
       .then(({ data }) => {
         setAllMessages(data);
         setloaded(true);
+        socket.emit("join chat",chat_id);
       });
-  }, [refresh, chat_id, userData.data.token]);
+      setAllMessagesCopy(allMessages);
+  }, [refresh, chat_id, userData.data.token, allMessages]);
 
   if (!loaded) {
     return (
